@@ -51,6 +51,9 @@
   <ItemGroup>
     <Compile Include="CleaningRobot.cs" />
     <Compile Include="Domain\CleaningRobot.cs" />
+    <Compile Include="Domain\CleaningRobotState.cs" />
+    <Compile Include="Domain\Instruction.cs" />
+    <Compile Include="Domain\Position.cs" />
     <Compile Include="IBasicInstruction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
