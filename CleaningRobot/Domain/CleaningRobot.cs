@@ -9,80 +9,50 @@ namespace CleaningRobot.Domain
 	public class Robot
 	{
 		public int Battery { get; private set; }
+		public CleaningRobotState CurrentState { get; private set; }
 
-		public Position CurrentPosition { get; private set; }
-
-		public Orientation CurrentOrientation { get; private set; }
-
-		public Robot(int initialBattery, Position currentPosition, Orientation currentOrientation)
+		public Robot(int battery, int x, int y, OrientationEnum orientation)
 		{
-			Battery = initialBattery;
-			CurrentPosition = currentPosition;
-			CurrentOrientation = currentOrientation;
+			Battery = battery;
+			CurrentState = new CleaningRobotState(x, y, orientation);
 		}
 
-		public void ExecuteInstruction(InstructionEnum instruction)
+		public void ExecuteInstruction(Instruction instruction)
 		{
-			
-		}
-	}
+			if (Battery < instruction.BatteryCost)
+				return;
 
-	public enum InstructionEnum
-	{
-		TurnLeft,
-		TurnRight,
-		Advance,
-		Clean,
-		Back
-	}
+			switch (instruction.Type)
+			{
+				case InstructionType.TL:
+					TurnLeft();
+					break;
+				default:
+					throw new InvalidOperationException();
+			}
 
-	public struct Position
-	{
-		public Position(int x, int y)
-		{
-			X = x;
-			Y = y;
+			Battery -= instruction.BatteryCost;
 		}
 
-		public int X { get; private set; }
-
-		public int Y { get; private set; }
-	}
-
-	public enum OrientationEnum
-	{
-		North,
-		South,
-		East,
-		West
-	}
-
-	public struct Orientation
-	{
-		public OrientationEnum CurrentOrientation { get; private set; }
-
-		public Orientation(OrientationEnum currentOrientation)
+		private void TurnLeft()
 		{
-			CurrentOrientation = currentOrientation;
-		}
-
-		public Orientation TurnLeft()
-		{
-			switch (CurrentOrientation)
+			switch (CurrentState.Orientation)
 			{
 				case OrientationEnum.North:
-					return new Orientation(OrientationEnum.West);
+					CurrentState = CurrentState.ChangeOrientation(OrientationEnum.West);
+					break;
 				case OrientationEnum.West:
-					return new Orientation(OrientationEnum.South);
+					CurrentState = CurrentState.ChangeOrientation(OrientationEnum.South);
+					break;
 				case OrientationEnum.South:
-					return new Orientation(OrientationEnum.East);
+					CurrentState = CurrentState.ChangeOrientation(OrientationEnum.East);
+					break;
 				case OrientationEnum.East:
-					return new Orientation(OrientationEnum.North);
+					CurrentState = CurrentState.ChangeOrientation(OrientationEnum.North);
+					break;
 				default:
 					throw new InvalidOperationException();
 			}
 		}
-
-	}
-
+	}	
 }
